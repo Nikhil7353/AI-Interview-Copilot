@@ -1,0 +1,15 @@
+PySide6-Essentials>=6.6,<7
+# Optional document extraction (PDF via PyMuPDF, DOCX via python-docx).
+PyMuPDF>=1.23,<2
+python-docx>=1.1,<2
+# AI providers
+openai>=1.0,<2
+# PostgreSQL + pgvector storage
+psycopg2-binary>=2.9,<3
+# Optional audio-file transcription. First use downloads the small.en model.
+faster-whisper>=1.2,<2
+# Optional live microphone and Windows WASAPI speaker/headphone loopback capture.
+sounddevice>=0.5,<1
+PyAudioWPatch>=0.2.12,<1
+# Windows native integration (taskbar & window styling)
+pywin32>=306

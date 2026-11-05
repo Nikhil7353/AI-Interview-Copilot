@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Local screen-capture compatibility check</title>
+  <style>
+    body { margin: 2rem auto; padding: 0 1rem; max-width: 920px; color: #e9edf4; background: #12151b; font: 16px/1.5 "Segoe UI", sans-serif; }
+    button { margin: .25rem; padding: .65rem 1rem; color: white; background: #5548c8; border: 0; border-radius: .45rem; cursor: pointer; }
+    video { display: block; width: 100%; max-height: 65vh; margin-top: 1rem; background: #050608; border: 1px solid #535a68; }
+    #status { padding: .7rem; background: #202530; border-radius: .45rem; }
+    .notice { color: #ffd991; }
+  </style>
+</head>
+<body>
+  <h1>Local screen-capture compatibility check</h1>
+  <p>This page previews a screen or window capture locally in this browser tab. It does not upload or transmit the captured frames.</p>
+  <p class="notice">Assume the assistant can be seen or recorded. Capture exclusion is best-effort and may be ignored by a sharing application.</p>
+  <p>Start the preview, then choose either the AI Interview Copilot window for ordinary window sharing or the entire display for full-desktop sharing. Stop the preview before changing the app's capture setting and repeat both selections.</p>
+  <button id="start">Choose window or display</button>
+  <button id="stop" disabled>Stop preview</button>
+  <div id="status" role="status">No capture active. Use only a local test session.</div>
+  <video id="preview" autoplay muted playsinline></video>
+  <script>
+    let stream;
+    const status = document.getElementById("status");
+    const video = document.getElementById("preview");
+    document.getElementById("start").onclick = async () => {
+      try {
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: 5 }, audio: false });
+        video.srcObject = stream;
+        const track = stream.getVideoTracks()[0];
+        const source = track.getSettings().displaySurface || "capture source";
+        status.textContent = `Local preview active. Browser reports source type: ${source}. No frames are sent anywhere.`;
+        track.addEventListener("ended", stopCapture, { once: true });
+        document.getElementById("start").disabled = true;
+        document.getElementById("stop").disabled = false;
+      } catch (error) {
+        status.textContent = `Capture did not start: ${error.name}. Choose a source in the browser picker and allow this local preview.`;
+      }
+    };
+    function stopCapture() {
+      if (stream) stream.getTracks().forEach(track => track.stop());
+      stream = null;
+      video.srcObject = null;
+      document.getElementById("start").disabled = false;
+      document.getElementById("stop").disabled = true;
+      status.textContent = "No capture active.";
+    }
+    document.getElementById("stop").onclick = stopCapture;
+    window.addEventListener("pagehide", stopCapture);
+  </script>
+</body>
+</html>

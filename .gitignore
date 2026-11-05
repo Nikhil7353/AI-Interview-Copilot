@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+.env
+.user_data/
+dist/
+build/
+*.spec
+stealth_window_architecture.md
+
